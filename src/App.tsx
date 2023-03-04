@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   FormControl,
@@ -9,7 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Transaction, Customer, MemberType, Product } from "./models/models";
+import { Transaction, Customer, MemberType } from "./models/models";
 
 const sessionToken =
   "IQoJb3JpZ2luX2VjEEIaCWV1LXdlc3QtMSJHMEUCIQC/wkt4/DzswTLsPRSxpc8j43pBnTESrQAJBClyeMkYLgIgZ6Pg4WJSa+BoIGZz72BKkEgs8zzWxhVM7vwHN6UfbUIqpgMI2v//////////ARACGgwwMzgwMjE4NDIzMjMiDEr8dXlBL1k0KAc9dir6AnkvDItUxgkJET+cas49d1TkYAJkYerVxgaz9qa1YvOnAiZ0HeoKq1QKdNFbUWp2/Dd+vVQBRIkUiYnNnf6sdhJ83R0Fb2XUAzas44u5UwP8Ruv/n41ZkyZLYcAAWWP0pNFDTNXau7c7fh6RHO6fiQithosM22oaemvvyRTA6kckkmuNB9N+tbA/wXXmtHmpP/ZjJTlrO9HPZj4CaxxVhLkahCaBH2DmNKa7t84X1q+lMUvFxirLQjZd7LMzEoLtEvRsdDIPTQS00Z3CB606BAbrSC4Y2frIPkrRirUYKlXH4jBZDvz8hlUBUulGulW7sd7KLrAbJo8oDmtvLAz3/MJWftKse3yi/6+8Xi4wwWtPg1oKTbRcoz+cfChXf0p+yYjLyVo0Sh4L31AsFtTe0Q3dnMfLA9hDB18Q+Tj028+Ji5Jqe29Uw2teZbyoQjoD4RhKq+KiqwbPJxy5RxcsspYyliVNEWOVqdoysudqCT7ihVawQqfD8QBi9TCNmtmfBjqmAQ10CjM1bwD+dGmn7CjqCzpPPXYC15wCVu/sSbo958Kn9LpJyi7JqK1rM4C+t790vBUrlnyza8y1BbqJqT2LbO9p2DsMCBudYViRnpwJgvKexRwoO8nPYQRWJgpa2T/SHJL3nEflx9hnDRmyD1WTwkO/FxNhKfcR1JEMAEP96k3RlZMlY9Hj1jcbFKBsoe7KRZJh9Wu2gGUmWHlrKtwpoT7ApduHzck=";
