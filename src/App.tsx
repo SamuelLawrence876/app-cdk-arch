@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Button,
   FormControl,
@@ -8,18 +8,15 @@ import {
   Select,
   TextField,
   Typography,
-} from "@mui/material";
-import { Transaction, Customer, MemberType } from "./models/models";
-
-const sessionToken =
-  "IQoJb3JpZ2luX2VjEEIaCWV1LXdlc3QtMSJHMEUCIQC/wkt4/DzswTLsPRSxpc8j43pBnTESrQAJBClyeMkYLgIgZ6Pg4WJSa+BoIGZz72BKkEgs8zzWxhVM7vwHN6UfbUIqpgMI2v//////////ARACGgwwMzgwMjE4NDIzMjMiDEr8dXlBL1k0KAc9dir6AnkvDItUxgkJET+cas49d1TkYAJkYerVxgaz9qa1YvOnAiZ0HeoKq1QKdNFbUWp2/Dd+vVQBRIkUiYnNnf6sdhJ83R0Fb2XUAzas44u5UwP8Ruv/n41ZkyZLYcAAWWP0pNFDTNXau7c7fh6RHO6fiQithosM22oaemvvyRTA6kckkmuNB9N+tbA/wXXmtHmpP/ZjJTlrO9HPZj4CaxxVhLkahCaBH2DmNKa7t84X1q+lMUvFxirLQjZd7LMzEoLtEvRsdDIPTQS00Z3CB606BAbrSC4Y2frIPkrRirUYKlXH4jBZDvz8hlUBUulGulW7sd7KLrAbJo8oDmtvLAz3/MJWftKse3yi/6+8Xi4wwWtPg1oKTbRcoz+cfChXf0p+yYjLyVo0Sh4L31AsFtTe0Q3dnMfLA9hDB18Q+Tj028+Ji5Jqe29Uw2teZbyoQjoD4RhKq+KiqwbPJxy5RxcsspYyliVNEWOVqdoysudqCT7ihVawQqfD8QBi9TCNmtmfBjqmAQ10CjM1bwD+dGmn7CjqCzpPPXYC15wCVu/sSbo958Kn9LpJyi7JqK1rM4C+t790vBUrlnyza8y1BbqJqT2LbO9p2DsMCBudYViRnpwJgvKexRwoO8nPYQRWJgpa2T/SHJL3nEflx9hnDRmyD1WTwkO/FxNhKfcR1JEMAEP96k3RlZMlY9Hj1jcbFKBsoe7KRZJh9Wu2gGUmWHlrKtwpoT7ApduHzck=";
+} from '@mui/material';
+import { Transaction, Customer, MemberType } from './models/models';
 
 const MyForm: React.FC = () => {
   const [formData, setFormData] = useState<Transaction>({
-    name: "",
-    email: "",
-    phone: "",
-    location: "",
+    name: '',
+    email: '',
+    phone: '',
+    location: '',
     total: 0,
     status: Customer.RETAIL,
     fraud: false,
@@ -45,19 +42,19 @@ const MyForm: React.FC = () => {
   for (let i = 0; i < inputCount; i++) {
     inputs.push(
       <div key={i}>
-        <FormControl variant="outlined" style={{ marginRight: "1rem" }}>
+        <FormControl variant="outlined" style={{ marginRight: '1rem' }}>
           <InputLabel id={`dropdown-label-${i}`}>Option 1</InputLabel>
           <Select
             value={formData.products[i]?.name}
             // onChange={handleChange}
             labelId={`dropdown-label-${i}`}
             label="Option 1"
-            style={{ minWidth: "150px" }}
+            style={{ minWidth: '150px' }}
             MenuProps={{
               PaperProps: {
                 style: {
-                  maxHeight: "200px",
-                  width: "250px",
+                  maxHeight: '200px',
+                  width: '250px',
                 },
               },
             }}
@@ -67,18 +64,18 @@ const MyForm: React.FC = () => {
             <MenuItem value={3}>Value 3</MenuItem>
           </Select>
         </FormControl>
-        <FormControl variant="outlined" style={{ marginRight: "1rem" }}>
+        <FormControl variant="outlined" style={{ marginRight: '1rem' }}>
           <InputLabel id={`dropdown-label-${i}`}>Option 2</InputLabel>
           <Select
             labelId={`dropdown-label-${i}`}
             value={formData.products[i]?.productType}
             label="Option 2"
-            style={{ minWidth: "150px" }}
+            style={{ minWidth: '150px' }}
             MenuProps={{
               PaperProps: {
                 style: {
-                  maxHeight: "200px",
-                  width: "250px",
+                  maxHeight: '200px',
+                  width: '250px',
                 },
               },
             }}
@@ -87,39 +84,35 @@ const MyForm: React.FC = () => {
             <MenuItem value={2}>Value 2</MenuItem>
             <MenuItem value={3}>Value 3</MenuItem>
           </Select>
-          <Typography variant="body1" style={{ marginTop: "1rem" }}>
+          <Typography variant="body1" style={{ marginTop: '1rem' }}>
             Price {i + 1}
           </Typography>
         </FormControl>
-      </div>
+      </div>,
     );
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    const url =
-      "https://sk8inyuvn9.execute-api.eu-west-1.amazonaws.com/prod/events";
+    const url = process.env.API_GATEWAY_URL;
 
     event.preventDefault();
 
-    const response = await fetch(url, {
-      method: "POST",
-      mode: "no-cors",
+    const response = await fetch(url + 'events', {
+      method: 'POST',
+      mode: 'no-cors',
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionToken}`,
-        "X-Amz-Security-Token": sessionToken as string,
-        "X-Amz-Date": new Date().toISOString(),
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(formData),
     });
 
     if (response.ok) {
-      alert("Data submitted successfully!");
+      alert('Data submitted successfully!');
       setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        location: "",
+        name: '',
+        email: '',
+        phone: '',
+        location: '',
         total: 0,
         status: Customer.RETAIL,
         fraud: false,

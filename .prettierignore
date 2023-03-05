@@ -1,0 +1,16 @@
+# Ignore artifacts:
+build
+coverage
+dist
+package.json
+package-lock.json
+readme.md
+tsconfig.json
+.prettierrc
+.eslintrc
+.eslintignore
+.gitignore
+.npmignore
+.vscode
+node_modules
+

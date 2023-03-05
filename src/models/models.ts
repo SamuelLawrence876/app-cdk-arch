@@ -1,12 +1,12 @@
 // make enum list for member or non member type:
 export enum MemberType {
-  MEMBER = "MEMBER",
-  NON_MEMBER = "NON_MEMBER",
+  MEMBER = 'MEMBER',
+  NON_MEMBER = 'NON_MEMBER',
 }
 
 export enum Customer {
-  RETAIL = "RETAIL",
-  WHOLESALE = "WHOLESALE",
+  RETAIL = 'RETAIL',
+  WHOLESALE = 'WHOLESALE',
 }
 
 export interface CustomerData {
@@ -46,7 +46,7 @@ export interface Params {
 export type EventBridgeEvent<TEventType, TEventData> = {
   version: string;
   id: string;
-  "detail-type": TEventType;
+  'detail-type': TEventType;
   source: string;
   account: string;
   time: string;
@@ -58,6 +58,6 @@ export type EventBridgeEvent<TEventType, TEventData> = {
 export type creditCardCustomerTransactionEvent = Transaction;
 
 export type CustomerAnalyticsEvent = EventBridgeEvent<
-  "Transaction Event",
+  'Transaction Event',
   creditCardCustomerTransactionEvent
 >;
