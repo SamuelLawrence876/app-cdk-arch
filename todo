@@ -1,0 +1,4 @@
+fix prodtucts being posted
+fix form not clearning after submit
+dynamodb best practice
+make sure all services are handling events correctly

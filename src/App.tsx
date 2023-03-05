@@ -10,6 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import { Transaction, Customer, MemberType } from './models/models';
+import Info from './components/info';
 
 const MyForm: React.FC = () => {
   const [formData, setFormData] = useState<Transaction>({
@@ -93,7 +94,7 @@ const MyForm: React.FC = () => {
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    const url = process.env.API_GATEWAY_URL;
+    const url = process.env.REACT_APP_API_GATEWAY_URL;
 
     event.preventDefault();
 
@@ -106,7 +107,7 @@ const MyForm: React.FC = () => {
       body: JSON.stringify(formData),
     });
 
-    if (response.ok) {
+    if (response.status === 200) {
       alert('Data submitted successfully!');
       setFormData({
         name: '',
@@ -128,6 +129,20 @@ const MyForm: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit}>
+      <Typography align="center" variant="h4" color="primary" gutterBottom>
+        AWS CDK React App
+      </Typography>
+      <Typography
+        align="center"
+        variant="body1"
+        gutterBottom
+        style={{ fontWeight: 'bold', marginBottom: '2rem' }}
+      >
+        The following is a is a high-level overview of the architecture of the
+        react app. The basis of the app is that it is a serverless application
+        that uses AWS Lambda to handle the backend logic and DynamoDB to store
+        and manage the inventory data.
+      </Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -258,6 +273,7 @@ const MyForm: React.FC = () => {
           </Button>
         </Grid>
       </Grid>
+      <Info />
     </form>
   );
 };
