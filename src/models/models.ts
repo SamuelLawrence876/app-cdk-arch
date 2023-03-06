@@ -30,9 +30,8 @@ export interface Transaction {
   email: string;
   phone: string;
   products: Product[];
-  total: number;
   review: number;
-  discount: number;
+  discount: string;
   location: string;
   fraud: boolean;
   memberType: MemberType;

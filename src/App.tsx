@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import {
+  Alert,
+  Box,
   Button,
   FormControl,
   Grid,
   InputLabel,
   MenuItem,
+  Rating,
   Select,
   TextField,
   Typography,
@@ -18,36 +21,45 @@ const MyForm: React.FC = () => {
     email: '',
     phone: '',
     location: '',
-    total: 0,
+    discount: '',
     status: Customer.RETAIL,
     fraud: false,
     review: 0,
     memberType: MemberType.MEMBER,
     products: [],
-    discount: 0,
   });
   const [inputCount, setInputCount] = useState(0);
+  const [alert, setAlert] = useState(false);
 
   const handleClick = () => {
     setInputCount(inputCount + 1);
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value,
-    });
+  const handleChange = (event: any) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   const inputs = [];
   for (let i = 0; i < inputCount; i++) {
     inputs.push(
       <div key={i}>
-        <FormControl variant="outlined" style={{ marginRight: '1rem' }}>
-          <InputLabel id={`dropdown-label-${i}`}>Option 1</InputLabel>
+        <Typography
+          sx={{
+            marginTop: '1rem',
+            marginBottom: '0.5rem',
+            fontWeight: 'bold',
+            fontSize: '1.2rem',
+            color: '#3f51b5',
+          }}
+        >
+          Item {i + 1}
+        </Typography>
+        <FormControl variant="outlined">
+          <InputLabel id={`dropdown-label-${i}`}>Shoe</InputLabel>
           <Select
             value={formData.products[i]?.name}
-            // onChange={handleChange}
+            onChange={handleChange}
             labelId={`dropdown-label-${i}`}
             label="Option 1"
             style={{ minWidth: '150px' }}
@@ -60,45 +72,34 @@ const MyForm: React.FC = () => {
               },
             }}
           >
-            <MenuItem value={1}>Value 1</MenuItem>
-            <MenuItem value={2}>Value 2</MenuItem>
-            <MenuItem value={3}>Value 3</MenuItem>
+            <MenuItem value={1}>Chukka</MenuItem>
+            <MenuItem value={2}>Air Forces</MenuItem>
+            <MenuItem value={3}>Air Max</MenuItem>
+            <MenuItem value={4}>Air Jordan</MenuItem>
+            <MenuItem value={5}>Duckbill</MenuItem>
           </Select>
         </FormControl>
         <FormControl variant="outlined" style={{ marginRight: '1rem' }}>
-          <InputLabel id={`dropdown-label-${i}`}>Option 2</InputLabel>
-          <Select
-            labelId={`dropdown-label-${i}`}
-            value={formData.products[i]?.productType}
-            label="Option 2"
-            style={{ minWidth: '150px' }}
-            MenuProps={{
-              PaperProps: {
-                style: {
-                  maxHeight: '200px',
-                  width: '250px',
-                },
-              },
-            }}
-          >
-            <MenuItem value={1}>Value 1</MenuItem>
-            <MenuItem value={2}>Value 2</MenuItem>
-            <MenuItem value={3}>Value 3</MenuItem>
-          </Select>
-          <Typography variant="body1" style={{ marginTop: '1rem' }}>
-            Price {i + 1}
-          </Typography>
+          <TextField
+            required
+            fullWidth
+            label="size"
+            name="price"
+            type="number"
+            value={formData.products[i]?.price}
+            onChange={handleChange}
+          />
         </FormControl>
       </div>,
     );
   }
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: any) => {
     const url = process.env.REACT_APP_API_GATEWAY_URL;
 
     event.preventDefault();
 
-    const response = await fetch(url + 'events', {
+    await fetch(url + 'events', {
       method: 'POST',
       mode: 'no-cors',
       headers: {
@@ -107,28 +108,34 @@ const MyForm: React.FC = () => {
       body: JSON.stringify(formData),
     });
 
-    if (response.status === 200) {
-      alert('Data submitted successfully!');
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        location: '',
-        total: 0,
-        status: Customer.RETAIL,
-        fraud: false,
-        review: 0,
-        memberType: MemberType.MEMBER,
-        products: [],
-        discount: 0,
-      });
-    } else {
-      console.log(response);
-    }
+    setAlert(true);
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      location: '',
+
+      status: Customer.RETAIL,
+      fraud: false,
+      review: 0,
+      memberType: MemberType.MEMBER,
+      products: [],
+      discount: '',
+    });
   };
 
   return (
     <form onSubmit={handleSubmit}>
+      {alert && (
+        <Alert
+          severity="success"
+          onClose={() => {
+            setAlert(false);
+          }}
+        >
+          Product submission successful!
+        </Alert>
+      )}
       <Typography align="center" variant="h4" color="primary" gutterBottom>
         AWS CDK React App
       </Typography>
@@ -188,23 +195,22 @@ const MyForm: React.FC = () => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            required
             fullWidth
-            label="Total"
-            name="total"
-            type="number"
-            value={formData.total}
+            label="Discount Code"
+            name="discount"
+            type="text"
+            value={formData.discount}
             onChange={handleChange}
           />
         </Grid>
+
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
-            <InputLabel id="status">Status</InputLabel>
             <Select
               labelId="status"
               name="status"
               value={formData.status}
-              // onChange={handleChange}
+              onChange={handleChange}
             >
               <MenuItem value={Customer.RETAIL}>Retail</MenuItem>
               <MenuItem value={Customer.WHOLESALE}>Wholesale</MenuItem>
@@ -213,12 +219,11 @@ const MyForm: React.FC = () => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
-            <InputLabel id="memberType">Member Type</InputLabel>
             <Select
               labelId="memberType"
               name="memberType"
               value={formData.memberType}
-              // onChange={handleChange}
+              onChange={handleChange}
             >
               <MenuItem value={MemberType.MEMBER}>Member</MenuItem>
               <MenuItem value={MemberType.NON_MEMBER}>Non-Member</MenuItem>
@@ -226,46 +231,49 @@ const MyForm: React.FC = () => {
           </FormControl>
         </Grid>
         <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
-            <InputLabel id="review">Review</InputLabel>
-            <Select
-              labelId="review"
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              width: '96%',
+              height: '75%',
+              borderRadius: 1,
+              border: '1px solid rgba(0, 0, 0, 0.23)',
+              padding: '8px 16px',
+              backgroundColor: 'white',
+              '&:hover': {
+                backgroundColor: 'rgba(0, 0, 0, 0.04)',
+              },
+              '&:focus-within': {
+                backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                borderColor: '#80bdff',
+                boxShadow: '0 0 0 0.2rem rgba(0, 123, 255, 0.5)',
+              },
+            }}
+          >
+            <InputLabel id="memberType" sx={{ width: '80%' }}>
+              Customer Review
+            </InputLabel>
+
+            <Rating
               name="review"
               value={formData.review}
-              // onChange={handleChange}
-            >
-              <MenuItem value={0}>0</MenuItem>
-              <MenuItem value={1}>1</MenuItem>
-              <MenuItem value={2}>2</MenuItem>
-              <MenuItem value={3}>3</MenuItem>
-              <MenuItem value={4}>4</MenuItem>
-              <MenuItem value={5}>5</MenuItem>
-            </Select>
-          </FormControl>
+              onChange={handleChange}
+            />
+          </Box>
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
-            <InputLabel id="discount">Discount</InputLabel>
-            <Select
-              labelId="discount"
-              name="discount"
-              value={formData.discount}
-              // onChange={handleChange}
-            >
-              <MenuItem value={0}>0</MenuItem>
-              <MenuItem value={5}>5</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={15}>15</MenuItem>
-              <MenuItem value={20}>20</MenuItem>
-              <MenuItem value={25}>25</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
+
         <Grid item xs={12} sm={12}>
-          <Button variant="contained" onClick={handleClick} fullWidth>
-            Toggle Input
+          <Button
+            variant="contained"
+            onClick={handleClick}
+            fullWidth
+            sx={{ marginBottom: '1rem' }}
+          >
+            Add additional product
           </Button>
           {inputs}
+          {/* calculate total from product */}
         </Grid>
         <Grid item xs={12}>
           <Button variant="contained" color="primary" type="submit" fullWidth>
