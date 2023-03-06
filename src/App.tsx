@@ -14,7 +14,10 @@ import {
 } from '@mui/material';
 import { Transaction, Customer, MemberType } from './models/models';
 import Info from './components/info';
-
+interface TextFieldProps {
+  id: string;
+  label: string;
+}
 const MyForm: React.FC = () => {
   const [formData, setFormData] = useState<Transaction>({
     name: '',
@@ -26,73 +29,89 @@ const MyForm: React.FC = () => {
     fraud: false,
     review: 0,
     memberType: MemberType.MEMBER,
-    products: [],
+    products: [
+      {
+        id: '',
+        name: '',
+        price: 0,
+        productType: '',
+      },
+    ],
   });
-  const [inputCount, setInputCount] = useState(0);
-  const [alert, setAlert] = useState(false);
 
-  const handleClick = () => {
-    setInputCount(inputCount + 1);
-  };
+  const [alert, setAlert] = useState(false);
 
   const handleChange = (event: any) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const inputs = [];
-  for (let i = 0; i < inputCount; i++) {
-    inputs.push(
-      <div key={i}>
-        <Typography
-          sx={{
-            marginTop: '1rem',
-            marginBottom: '0.5rem',
-            fontWeight: 'bold',
-            fontSize: '1.2rem',
-            color: '#3f51b5',
-          }}
-        >
-          Item {i + 1}
-        </Typography>
-        <FormControl variant="outlined">
-          <InputLabel id={`dropdown-label-${i}`}>Shoe</InputLabel>
-          <Select
-            value={formData.products[i]?.name}
-            onChange={handleChange}
-            labelId={`dropdown-label-${i}`}
-            label="Option 1"
-            style={{ minWidth: '150px' }}
-            MenuProps={{
-              PaperProps: {
-                style: {
-                  maxHeight: '200px',
-                  width: '250px',
-                },
-              },
-            }}
-          >
-            <MenuItem value={1}>Chukka</MenuItem>
-            <MenuItem value={2}>Air Forces</MenuItem>
-            <MenuItem value={3}>Air Max</MenuItem>
-            <MenuItem value={4}>Air Jordan</MenuItem>
-            <MenuItem value={5}>Duckbill</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl variant="outlined" style={{ marginRight: '1rem' }}>
-          <TextField
-            required
-            fullWidth
-            label="size"
-            name="price"
-            type="number"
-            value={formData.products[i]?.price}
-            onChange={handleChange}
-          />
-        </FormControl>
-      </div>,
-    );
-  }
+  const [textFields, setTextFields] = useState<TextFieldProps[]>([
+    { id: 'Shoes', label: 'Price' },
+  ]);
+
+  const handleAddFields = () => {
+    setTextFields([
+      ...textFields,
+      {
+        id: `Shoes`,
+        label: `Price`,
+      },
+    ]);
+  };
+  // const inputs = [];
+  // for (let i = 0; i < inputCount; i++) {
+  //   inputs.push(
+  //     <div key={i}>
+  //       <Typography
+  //         sx={{
+  //           marginTop: '1rem',
+  //           marginBottom: '0.5rem',
+  //           fontWeight: 'bold',
+  //           fontSize: '1.2rem',
+  //           color: '#3f51b5',
+  //         }}
+  //       >
+  //         Item {i + 1}
+  //       </Typography>
+  //       <FormControl variant="outlined">
+  //         <InputLabel id={`dropdown-label-${i}`}>Shoe</InputLabel>
+  //         <Select
+  //           value={formData.products[i]?.name}
+  //           onChange={handleChange}
+  //           labelId={`dropdown-label-${i}`}
+  //           label="Option 1"
+  //           style={{ minWidth: '150px' }}
+  //           MenuProps={{
+  //             PaperProps: {
+  //               style: {
+  //                 maxHeight: '200px',
+  //                 width: '250px',
+  //               },
+  //             },
+  //           }}
+  //         >
+  //           <MenuItem value={1}>Chukka</MenuItem>
+  //           <MenuItem value={2}>Air Forces</MenuItem>
+  //           <MenuItem value={3}>Air Max</MenuItem>
+  //           <MenuItem value={4}>Air Jordan</MenuItem>
+  //           <MenuItem value={5}>Duckbill</MenuItem>
+  //         </Select>
+  //       </FormControl>
+  //       <FormControl variant="outlined" style={{ marginRight: '1rem' }}>
+  //         <TextField
+  //           required
+  //           fullWidth
+  //           label="size"
+  //           name="price"
+  //           type="number"
+  //           value={formData.products[i]?.price}
+  //           onChange={handleChange}
+  //         />
+  //       </FormControl>
+  //     </div>,
+  //   );
+  // }
 
   const handleSubmit = async (event: any) => {
     const url = process.env.REACT_APP_API_GATEWAY_URL;
@@ -265,15 +284,47 @@ const MyForm: React.FC = () => {
 
         <Grid item xs={12} sm={12}>
           <Button
-            variant="contained"
-            onClick={handleClick}
             fullWidth
-            sx={{ marginBottom: '1rem' }}
+            variant="contained"
+            onClick={handleAddFields}
+            sx={{
+              marginBottom: '1rem',
+            }}
           >
-            Add additional product
+            Add Fields
           </Button>
-          {inputs}
-          {/* calculate total from product */}
+          <Typography>Product</Typography>
+          {/* todo Posts to products */}
+          {textFields.map((field) => (
+            <div>
+              <TextField
+                sx={{
+                  width: '30%',
+                  marginBottom: '1rem',
+                }}
+                onChange={handleChange}
+                key={field.id}
+                id={field.id}
+                label="Product name"
+                name="Product name"
+              />
+              <TextField
+                sx={{
+                  width: '30%',
+                  marginBottom: '1rem',
+                  marginLeft: '1rem',
+                }}
+                onChange={handleChange}
+                key={field.id}
+                id={field.id}
+                label="Product price"
+                type="number"
+                name="Product price"
+              />
+              {/* <Typography>price</Typography> */}
+            </div>
+          ))}
+          <Typography>Total:</Typography>
         </Grid>
         <Grid item xs={12}>
           <Button variant="contained" color="primary" type="submit" fullWidth>
