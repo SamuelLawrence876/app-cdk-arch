@@ -1,340 +1,145 @@
 import React, { useState } from 'react';
-import {
-  Alert,
-  Box,
-  Button,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Rating,
-  Select,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { Transaction, Customer, MemberType } from './models/models';
-import Info from './components/info';
-interface TextFieldProps {
+import { Button, TextField } from '@mui/material';
+
+interface Product {
   id: string;
-  label: string;
+  name: string;
+  price: number;
+  productType: string;
 }
-const MyForm: React.FC = () => {
-  const [formData, setFormData] = useState<Transaction>({
+
+interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+  products: Product[];
+  discount: string;
+}
+
+const App: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
     phone: '',
-    location: '',
+    products: [],
     discount: '',
-    status: Customer.RETAIL,
-    fraud: false,
-    review: 0,
-    memberType: MemberType.MEMBER,
-    products: [
-      {
-        id: '',
-        name: '',
-        price: 0,
-        productType: '',
-      },
-    ],
   });
 
-  const [alert, setAlert] = useState(false);
-
-  const handleChange = (event: any) => {
-    const { name, value } = event.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const [textFields, setTextFields] = useState<TextFieldProps[]>([
-    { id: 'Shoes', label: 'Price' },
-  ]);
-
-  const handleAddFields = () => {
-    setTextFields([
-      ...textFields,
-      {
-        id: `Shoes`,
-        label: `Price`,
-      },
-    ]);
-  };
-  // const inputs = [];
-  // for (let i = 0; i < inputCount; i++) {
-  //   inputs.push(
-  //     <div key={i}>
-  //       <Typography
-  //         sx={{
-  //           marginTop: '1rem',
-  //           marginBottom: '0.5rem',
-  //           fontWeight: 'bold',
-  //           fontSize: '1.2rem',
-  //           color: '#3f51b5',
-  //         }}
-  //       >
-  //         Item {i + 1}
-  //       </Typography>
-  //       <FormControl variant="outlined">
-  //         <InputLabel id={`dropdown-label-${i}`}>Shoe</InputLabel>
-  //         <Select
-  //           value={formData.products[i]?.name}
-  //           onChange={handleChange}
-  //           labelId={`dropdown-label-${i}`}
-  //           label="Option 1"
-  //           style={{ minWidth: '150px' }}
-  //           MenuProps={{
-  //             PaperProps: {
-  //               style: {
-  //                 maxHeight: '200px',
-  //                 width: '250px',
-  //               },
-  //             },
-  //           }}
-  //         >
-  //           <MenuItem value={1}>Chukka</MenuItem>
-  //           <MenuItem value={2}>Air Forces</MenuItem>
-  //           <MenuItem value={3}>Air Max</MenuItem>
-  //           <MenuItem value={4}>Air Jordan</MenuItem>
-  //           <MenuItem value={5}>Duckbill</MenuItem>
-  //         </Select>
-  //       </FormControl>
-  //       <FormControl variant="outlined" style={{ marginRight: '1rem' }}>
-  //         <TextField
-  //           required
-  //           fullWidth
-  //           label="size"
-  //           name="price"
-  //           type="number"
-  //           value={formData.products[i]?.price}
-  //           onChange={handleChange}
-  //         />
-  //       </FormControl>
-  //     </div>,
-  //   );
-  // }
-
-  const handleSubmit = async (event: any) => {
-    const url = process.env.REACT_APP_API_GATEWAY_URL;
-
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const url = process.env.REACT_APP_API_GATEWAY_URL;
+    try {
+      const response = await fetch(url + 'events', {
+        mode: 'no-cors',
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-    await fetch(url + 'events', {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    key: keyof FormData,
+  ) => {
+    setFormData({ ...formData, [key]: event.target.value });
+  };
 
-    setAlert(true);
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      location: '',
+  const handleProductChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    key: keyof Product,
+    index: number,
+  ) => {
+    const products = [...formData.products];
+    // @ts-ignore
+    products[index][key] = event.target.value;
+    setFormData({ ...formData, products });
+  };
 
-      status: Customer.RETAIL,
-      fraud: false,
-      review: 0,
-      memberType: MemberType.MEMBER,
-      products: [],
-      discount: '',
-    });
+  const handleAddProduct = () => {
+    const products = [...formData.products];
+    products.push({ id: '', name: '', price: 0, productType: '' });
+    setFormData({ ...formData, products });
+  };
+
+  const handleRemoveProduct = (index: number) => {
+    const products = [...formData.products];
+    products.splice(index, 1);
+    setFormData({ ...formData, products });
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      {alert && (
-        <Alert
-          severity="success"
-          onClose={() => {
-            setAlert(false);
-          }}
-        >
-          Product submission successful!
-        </Alert>
-      )}
-      <Typography align="center" variant="h4" color="primary" gutterBottom>
-        AWS CDK React App
-      </Typography>
-      <Typography
-        align="center"
-        variant="body1"
-        gutterBottom
-        style={{ fontWeight: 'bold', marginBottom: '2rem' }}
-      >
-        The following is a is a high-level overview of the architecture of the
-        react app. The basis of the app is that it is a serverless application
-        that uses AWS Lambda to handle the backend logic and DynamoDB to store
-        and manage the inventory data.
-      </Typography>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
+      <TextField
+        label="Name"
+        value={formData.name}
+        onChange={(event) => handleInputChange(event, 'name')}
+      />
+      <br />
+      <TextField
+        label="Email"
+        value={formData.email}
+        onChange={(event) => handleInputChange(event, 'email')}
+      />
+      <br />
+      <TextField
+        label="Phone"
+        value={formData.phone}
+        onChange={(event) => handleInputChange(event, 'phone')}
+      />
+      <br />
+      {formData.products.map((product, index) => (
+        <div key={index}>
           <TextField
-            required
-            fullWidth
-            label="Name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
+            label="Product ID"
+            value={product.id}
+            onChange={(event) => handleProductChange(event, 'id', index)}
           />
-        </Grid>
-        <Grid item xs={12} sm={6}>
           <TextField
-            required
-            fullWidth
-            label="Email"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
+            label="Product Name"
+            value={product.name}
+            onChange={(event) => handleProductChange(event, 'name', index)}
           />
-        </Grid>
-        <Grid item xs={12} sm={6}>
           <TextField
-            required
-            fullWidth
-            label="Phone"
-            name="phone"
-            type="tel"
-            value={formData.phone}
-            onChange={handleChange}
+            label="Product Price"
+            type="number"
+            value={product.price}
+            onChange={(event) => handleProductChange(event, 'price', index)}
           />
-        </Grid>
-        <Grid item xs={12} sm={6}>
           <TextField
-            required
-            fullWidth
-            label="Location"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
+            label="Product Type"
+            value={product.productType}
+            onChange={(event) =>
+              handleProductChange(event, 'productType', index)
+            }
           />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="Discount Code"
-            name="discount"
-            type="text"
-            value={formData.discount}
-            onChange={handleChange}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
-            <Select
-              labelId="status"
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-            >
-              <MenuItem value={Customer.RETAIL}>Retail</MenuItem>
-              <MenuItem value={Customer.WHOLESALE}>Wholesale</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
-            <Select
-              labelId="memberType"
-              name="memberType"
-              value={formData.memberType}
-              onChange={handleChange}
-            >
-              <MenuItem value={MemberType.MEMBER}>Member</MenuItem>
-              <MenuItem value={MemberType.NON_MEMBER}>Non-Member</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              width: '96%',
-              height: '75%',
-              borderRadius: 1,
-              border: '1px solid rgba(0, 0, 0, 0.23)',
-              padding: '8px 16px',
-              backgroundColor: 'white',
-              '&:hover': {
-                backgroundColor: 'rgba(0, 0, 0, 0.04)',
-              },
-              '&:focus-within': {
-                backgroundColor: 'rgba(0, 0, 0, 0.08)',
-                borderColor: '#80bdff',
-                boxShadow: '0 0 0 0.2rem rgba(0, 123, 255, 0.5)',
-              },
-            }}
-          >
-            <InputLabel id="memberType" sx={{ width: '80%' }}>
-              Customer Review
-            </InputLabel>
-
-            <Rating
-              name="review"
-              value={formData.review}
-              onChange={handleChange}
-            />
-          </Box>
-        </Grid>
-
-        <Grid item xs={12} sm={12}>
           <Button
-            fullWidth
             variant="contained"
-            onClick={handleAddFields}
-            sx={{
-              marginBottom: '1rem',
-            }}
+            onClick={() => handleRemoveProduct(index)}
           >
-            Add Fields
+            Remove
           </Button>
-          <Typography>Product</Typography>
-          {/* todo Posts to products */}
-          {textFields.map((field) => (
-            <div>
-              <TextField
-                sx={{
-                  width: '30%',
-                  marginBottom: '1rem',
-                }}
-                onChange={handleChange}
-                key={field.id}
-                id={field.id}
-                label="Product name"
-                name="Product name"
-              />
-              <TextField
-                sx={{
-                  width: '30%',
-                  marginBottom: '1rem',
-                  marginLeft: '1rem',
-                }}
-                onChange={handleChange}
-                key={field.id}
-                id={field.id}
-                label="Product price"
-                type="number"
-                name="Product price"
-              />
-              {/* <Typography>price</Typography> */}
-            </div>
-          ))}
-          <Typography>Total:</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <Button variant="contained" color="primary" type="submit" fullWidth>
-            Submit
-          </Button>
-        </Grid>
-      </Grid>
-      <Info />
+        </div>
+      ))}
+      <Button variant="contained" onClick={handleAddProduct}>
+        Add Product
+      </Button>
+      <br />
+      <TextField
+        label="Discount Code"
+        value={formData.discount}
+        onChange={(event) => handleInputChange(event, 'discount')}
+      />
+      <br />
+      <Button variant="contained" type="submit">
+        Submit
+      </Button>
     </form>
   );
 };
 
-export default MyForm;
+export default App;
