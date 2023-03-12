@@ -12,7 +12,13 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { Transaction, Customer, MemberType, Product } from './models/models';
+import {
+  Transaction,
+  Customer,
+  MemberType,
+  Product,
+  Location,
+} from './models/models';
 import Info from './components/info';
 
 const App: React.FC = () => {
@@ -26,46 +32,38 @@ const App: React.FC = () => {
     memberType: MemberType.MEMBER,
     review: 0,
     fraud: false,
-    location: '',
+    location: Location.UK,
   });
 
   const [alert, setAlert] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const url = process.env.REACT_APP_API_GATEWAY_URL;
 
-    try {
-      const response = await fetch(url + 'events', {
-        mode: 'no-cors',
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      const data = await response.json();
-      console.log(data);
-      setAlert(true);
+    await fetch(url + 'events', {
+      mode: 'no-cors',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    setAlert(true);
 
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        products: [],
-        discount: '',
-        status: Customer.RETAIL,
-        memberType: MemberType.MEMBER,
-        review: 0,
-        fraud: false,
-        location: '',
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      products: [],
+      discount: '',
+      status: Customer.RETAIL,
+      memberType: MemberType.MEMBER,
+      review: 0,
+      fraud: false,
+      location: Location.UK,
+    });
   };
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    key: keyof Transaction,
-  ) => {
+  const handleInputChange = (event: any, key: keyof Transaction) => {
     setFormData({ ...formData, [key]: event.target.value });
   };
 
@@ -148,18 +146,25 @@ const App: React.FC = () => {
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            fullWidth
-            label="Location"
-            name="location"
-            value={formData.location}
-            onChange={(event) => handleInputChange(event, 'location')}
-          />
+          <FormControl required fullWidth>
+            <InputLabel id="location-label">Location</InputLabel>
+            <Select
+              labelId="location-label"
+              id="location"
+              name="location"
+              value={formData.location}
+              onChange={(event) => handleInputChange(event, 'location')}
+            >
+              <MenuItem value={Location.UK}>UK</MenuItem>
+              <MenuItem value={Location.USA}>US</MenuItem>
+              <MenuItem value={Location.North_Korea}>North Korea</MenuItem>
+              <MenuItem value={Location.CANADA}>Canada</MenuItem>
+              <MenuItem value={Location.JAMAICA}>Jamaica</MenuItem>
+            </Select>
+          </FormControl>
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            required
             fullWidth
             label="Discount Code"
             value={formData.discount}

@@ -9,6 +9,14 @@ export enum Customer {
   WHOLESALE = 'WHOLESALE',
 }
 
+export enum Location {
+  JAMAICA = 'JAMAICA',
+  USA = 'USA',
+  CANADA = 'CANADA',
+  UK = 'UK',
+  North_Korea = 'North_Korea',
+}
+
 export interface CustomerData {
   id: string;
   createdAt: string;
@@ -32,7 +40,7 @@ export interface Transaction {
   products: Product[];
   review: number;
   discount: string;
-  location: string;
+  location: Location;
   fraud: boolean;
   memberType: MemberType;
 }
