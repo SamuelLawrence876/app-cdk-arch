@@ -7,6 +7,14 @@ export default function Info() {
       <Typography align="center" variant="h4">
         Inventory System Architecture
       </Typography>
+      <Typography
+        align="center"
+        variant="h5"
+        gutterBottom
+        style={{ marginBottom: '1rem' }}
+      >
+        What services are used in this project?
+      </Typography>
 
       <Typography align="center" variant="h5" gutterBottom>
         API Gateway
