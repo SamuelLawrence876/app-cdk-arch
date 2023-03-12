@@ -20,6 +20,7 @@ import {
   Location,
 } from './models/models';
 import Info from './components/info';
+import axios from 'axios';
 
 const App: React.FC = () => {
   const [formData, setFormData] = useState<Transaction>({
@@ -39,28 +40,38 @@ const App: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const url = process.env.REACT_APP_API_GATEWAY_URL;
+    const url = process.env.REACT_APP_API_GATEWAY_URL as string;
+    const api = process.env.REACT_APP_API_KEY as string;
 
-    await fetch(url + 'events', {
-      mode: 'no-cors',
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    });
-    setAlert(true);
+    console.log(url);
+    console.log(api);
+    try {
+      const response = await axios.post(url, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': api,
+        },
+      });
 
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      products: [],
-      discount: '',
-      status: Customer.RETAIL,
-      memberType: MemberType.MEMBER,
-      review: 0,
-      fraud: false,
-      location: Location.UK,
-    });
+      console.log(response.status);
+
+      setAlert(true);
+
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        products: [],
+        discount: '',
+        status: Customer.RETAIL,
+        memberType: MemberType.MEMBER,
+        review: 0,
+        fraud: false,
+        location: Location.UK,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleInputChange = (event: any, key: keyof Transaction) => {
